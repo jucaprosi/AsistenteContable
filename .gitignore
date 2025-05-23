@@ -1,0 +1,28 @@
+# Archivos y carpetas generados por Python/PyInstaller
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de base de datos (si no quieres versionarla)
+data/asistente_contable.db
+
+# Archivos de salida de instaladores/ejecutables grandes
+output/asico_setup.exe
+output/asico_setup.zip
+
+# Archivos temporales o específicos del editor
+.vscode/
+*.swp
+*~
+temp.txt
+
+# Otros archivos que no quieres versionar
+latest_version.txt
+Optional[ET.Element]
+QSize
+str
+tuple[Optional[str]
