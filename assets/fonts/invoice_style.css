@@ -1,0 +1,185 @@
+/* src/assets/css/invoice_style.css */
+
+/* --- Carga de Fuentes DejaVu Sans (para WeasyPrint/Navegadores) --- */
+/* Las rutas son relativas a SRC_DIR (base_url en WeasyPrint) */
+@font-face {
+    font-family: 'DejaVu Sans'; /* Nombre estándar */
+    src: url('assets/fonts/DejaVuSans.ttf') format('truetype'); /* Ruta desde SRC_DIR */
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'DejaVu Sans';
+    src: url('assets/fonts/DejaVuSans-Bold.ttf') format('truetype'); /* Ruta desde SRC_DIR */
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'DejaVu Sans';
+    src: url('assets/fonts/DejaVuSans-Oblique.ttf') format('truetype'); /* Ruta desde SRC_DIR */
+    font-weight: normal;
+    font-style: oblique; /* O 'italic' */
+}
+ @font-face {
+    font-family: 'DejaVu Sans';
+    src: url('assets/fonts/DejaVuSans-BoldOblique.ttf') format('truetype'); /* Ruta desde SRC_DIR */
+    font-weight: bold;
+    font-style: oblique; /* O 'italic' */
+}
+
+/* --- Estilos Básicos --- */
+body {
+    font-family: 'DejaVu Sans', sans-serif; /* Usar DejaVu Sans */
+    font-size: 9pt;
+    margin: 15mm 10mm 20mm 15mm; /* top right bottom left (aumentado bottom para footer) */
+    line-height: 1.3;
+}
+.header-container, .comprador-container, .footer-container {
+    width: 100%;
+    margin-bottom: 8mm;
+}
+/* Usar Flexbox para columnas */
+.columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+.col-izq, .col-der {
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.ride-box {
+    border: 1px solid black;
+    padding: 5px;
+    margin-bottom: 5mm;
+    height: 100%;
+    box-sizing: border-box;
+}
+.ride-box h2 {
+    margin: 0 0 5px 0;
+    font-size: 11pt;
+    font-weight: bold;
+    background-color: #eee;
+    padding: 2px 4px;
+    border-bottom: 1px solid #ccc;
+}
+.ride-box p {
+    margin: 3px 0;
+    font-size: 8pt;
+    word-wrap: break-word;
+    line-height: 1.2;
+}
+.ride-box .label {
+    font-weight: bold;
+}
+
+.comprador-box {
+    border: 1px solid black;
+    padding: 5px;
+}
+.comprador-box p { margin: 3px 0; }
+.comprador-box .comprador-line {
+    display: flex;
+    justify-content: space-between;
+}
+
+h1, h2, h3 {
+    font-weight: bold;
+    margin: 5px 0;
+}
+h1 { font-size: 14pt; text-align: center; margin-bottom: 8mm;}
+h2 { font-size: 11pt; }
+h3 { font-size: 10pt; margin-top: 5mm; border-bottom: 1px solid #eee; padding-bottom: 2px;}
+
+table.detalles {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 5mm;
+    font-size: 8pt;
+}
+table.detalles th, table.detalles td {
+    border: 1px solid #ccc;
+    padding: 4px 5px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detalles th {
+    background-color: #eee;
+    font-weight: bold;
+    text-align: center;
+}
+table.detalles td.num { text-align: right; }
+table.detalles td.desc { width: 40%; }
+table.detalles td.cod { width: 10%; }
+table.detalles td.cant { width: 5%; text-align: center;}
+table.detalles td.unit, table.detalles td.dcto, table.detalles td.total { width: 10%; text-align: right;}
+
+
+/* Contenedor para Totales e Info Adicional usando Flexbox */
+.summary-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 5mm;
+}
+
+.info-adicional-container {
+    flex: 3;
+    font-size: 8pt;
+}
+ .info-adicional-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ .info-adicional-container li { margin-bottom: 3px; }
+ .info-adicional-container .label { font-weight: bold; }
+
+.totales-container {
+    flex: 2;
+    font-size: 9pt;
+}
+.totales-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.totales-container td {
+    padding: 3px 5px;
+    border: 1px solid #ccc;
+}
+.totales-container td.label { text-align: left; font-weight: normal; }
+.totales-container td.value { text-align: right; }
+.totales-container tr.total td {
+     font-weight: bold;
+     font-size: 10pt;
+     background-color: #eee;
+}
+
+.pagos-container {
+    margin-top: 8mm;
+    font-size: 8pt;
+}
+ .pagos-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ .pagos-container li { margin-bottom: 3px; }
+ .pagos-container .label { font-weight: bold; } /* Añadido para consistencia */
+
+/* Pie de página con WeasyPrint */
+@page {
+    size: a4 portrait;
+    margin: 15mm 10mm 20mm 15mm; /* Ajustado margen inferior */
+
+    @bottom-center {
+        content: "Página " counter(page) " de " counter(pages);
+        font-family: 'DejaVu Sans', sans-serif;
+        font-size: 8pt;
+        color: #555;
+        vertical-align: top;
+        padding-top: 5mm;
+    }
+}

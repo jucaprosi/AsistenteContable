@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar Asistente Contable SRI</title>
+    <!-- Enlaza aquí tu archivo CSS si lo guardas por separado -->
+    <!-- <link rel="stylesheet" href="estilos.css"> -->
+    <style>
+        /* Estilos básicos para la sección de descarga (puedes moverlos a estilos.css) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            background-color: #f4f7f6; /* Un fondo general suave para la página */
+        }
+
+        .download-section {
+            max-width: 700px; /* Ancho máximo para centrar el contenido */
+            margin: 40px auto; /* Margen superior/inferior y centrado horizontal */
+            padding: 30px;
+            background-color: #ffffff; /* Fondo blanco para la sección principal */
+            border: 1px solid #ddd; /* Borde suave */
+            border-radius: 8px; /* Bordes redondeados */
+            text-align: center; /* Centrar texto */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra un poco más pronunciada */
+        }
+
+        .download-section h2 {
+            color: #0056b3; /* Color de título, un azul corporativo */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 2em; /* Tamaño de fuente más grande para el título */
+        }
+
+        .download-section .subtitle {
+            color: #555;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+
+        .download-box {
+            background-color: #f9f9f9; /* Fondo ligeramente diferente para la caja interna */
+            padding: 25px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+
+        .download-box .version-info,
+        .download-box .requirements {
+            font-size: 0.95em;
+            color: #444;
+            margin-bottom: 8px;
+        }
+        .download-box .version-info strong {
+            color: #007bff;
+        }
+
+        .download-button {
+            display: inline-block; /* Permite padding y margin */
+            background-color: #007bff; /* Color azul primario */
+            color: white; /* Texto blanco */
+            padding: 15px 30px; /* Espaciado interno más generoso */
+            margin: 20px 0; /* Margen superior/inferior */
+            text-decoration: none; /* Quitar subrayado del enlace */
+            border-radius: 5px; /* Bordes redondeados */
+            font-size: 1.2em; /* Tamaño de fuente un poco más grande */
+            font-weight: bold;
+            border: none; /* Quitar borde si el navegador añade alguno por defecto a los botones dentro de 'a' */
+            cursor: pointer; /* Cambiar cursor a mano */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
+        }
+
+        .download-button:hover,
+        .download-button:focus { /* Añadir :focus para accesibilidad */
+            background-color: #0056b3; /* Color más oscuro al pasar el ratón o enfocar */
+            transform: translateY(-2px); /* Pequeño efecto de elevación */
+            outline: none; /* Quitar outline por defecto en focus si se desea, pero considerar accesibilidad */
+        }
+        .download-button:active {
+            transform: translateY(0); /* Efecto de presionar */
+        }
+
+
+        .download-box .install-note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="download-section">
+        <h2>Descarga Asistente Contable SRI</h2>
+        <p class="subtitle">Simplifica la gestión de tus comprobantes electrónicos recibidos de forma eficiente y segura.</p>
+
+        <div class="download-box">
+            <p class="version-info">Última Versión Disponible: <strong>1.1.0</strong></p>
+            <p class="requirements">Requisitos del Sistema: Windows 10 o superior.</p>
+
+            <a href="https://contabilidadsri.com/asico_setup.zip" class="download-button" download>
+                Descargar Ahora (.zip)
+            </a>
+
+            <p class="install-note">
+                Haz clic en el botón para descargar el archivo de instalación.
+                Una vez descargado, descomprime el archivo, ejecuta el archivo .exe y sigue las instrucciones en pantalla para completar la instalación.
+            </p>
+        </div>
+
+        <p class="footer-note">
+            Si tienes algún problema durante la descarga o instalación, por favor, contacta con nuestro <a href="mailto:soporte@contabilidadsri.com">soporte técnico</a>.
+        </p>
+    </div>
+
+</body>
+</html>

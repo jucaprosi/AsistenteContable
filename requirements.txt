@@ -1,0 +1,11 @@
+defusedxml==0.7.1
+fonttools==4.57.0
+fpdf2==2.8.3
+pillow==11.2.1
+PyPDF2==3.0.1
+PySide6==6.9.0
+PySide6_Addons==6.9.0
+PySide6_Essentials==6.9.0
+python-barcode==0.15.1
+shiboken6==6.9.0
+appdirs==1.4.4

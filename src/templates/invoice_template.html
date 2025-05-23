@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura {{ factura_info.numero_factura }}</title>
+    <!-- La etiqueta <style> se ha movido a src/assets/css/invoice_style.css -->
+    <!-- WeasyPrint cargará el CSS externo a través del script Python -->
+</head>
+<body>
+
+    <h1>FACTURA Nro: {{ factura_info.numero_factura }}</h1>
+
+    <!-- Usar div con clase 'columns' para el layout -->
+    <div class="columns header-container">
+        <div class="col-izq">
+            <!-- Título del Emisor -->
+            <h2>{{ emisor.razon_social }}</h2>
+            {% if emisor.nombre_comercial and emisor.nombre_comercial != emisor.razon_social %}
+                <p style="font-weight: bold;">{{ emisor.nombre_comercial }}</p>
+            {% endif %}
+            <p><span class="label">RUC:</span> {{ emisor.ruc }}</p>
+            <p><span class="label">Dir. Matriz:</span> {{ emisor.dir_matriz }}</p>
+            <p><span class="label">Dir. Establecimiento:</span> {{ emisor.dir_establecimiento }}</p>
+            {% if emisor.contribuyente_especial %}
+                <p><span class="label">Contribuyente Especial Nro:</span> {{ emisor.contribuyente_especial }}</p>
+            {% endif %}
+            {% if emisor.obligado_contabilidad %}
+                <p><span class="label">Obligado a llevar Contabilidad:</span> {{ emisor.obligado_contabilidad }}</p>
+            {% endif %}
+        </div>
+        <div class="col-der">
+            <div class="ride-box">
+                <h2>FACTURA</h2> <!-- Título dentro de la caja -->
+                <p><span class="label">Nro:</span> {{ factura_info.numero_factura }}</p>
+                <p><span class="label">Número de Autorización:</span><br/>{{ numero_autorizacion }}</p>
+                <p><span class="label">Fecha y Hora Autorización:</span> {{ fecha_autorizacion_fmt | default(fecha_autorizacion) }}</p> {# Usa filtro #}
+                <p><span class="label">Ambiente:</span> {{ 'PRODUCCIÓN' if ambiente == '2' else 'PRUEBAS' if ambiente == '1' else ambiente }}</p>
+                <p><span class="label">Emisión:</span> {{ 'NORMAL' if factura_info.tipo_emision_doc == '1' else factura_info.tipo_emision_doc }}</p>
+                <p><span class="label">Clave de Acceso:</span><br/>{{ factura_info.clave_acceso }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="comprador-container">
+        <div class="comprador-box">
+            <p><span class="label">Razón Social / Nombres y Apellidos:</span> {{ comprador.razon_social }}</p>
+            <!-- Usar flexbox para alinear identificación y fecha -->
+            <div class="comprador-line">
+                <span><span class="label">Identificación:</span> {{ comprador.identificacion }}</span>
+                <span><span class="label">Fecha Emisión:</span> {{ factura_info.fecha_emision }}</span>
+            </div>
+        </div>
+    </div>
+
+    <table class="detalles">
+        <thead>
+            <tr>
+                <th class="cod">Código Princ.</th>
+                <th class="cod">Código Aux.</th>
+                <th class="cant">Cant.</th>
+                <th class="desc">Descripción</th>
+                <th class="unit">P. Unitario</th>
+                <th class="dcto">Descuento</th>
+                <th class="total">Precio Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in detalles %}
+            <tr>
+                <td>{{ item.codigo_principal | default('') }}</td>
+                <td>{{ item.codigo_auxiliar | default('') }}</td>
+                <!-- Usar filtro de moneda para cantidad si es apropiado, o solo número -->
+                <td class="num">{{ item.cantidad | default(0.0) }}</td> {# Sin formato moneda para cantidad #}
+                <td>{{ item.descripcion | default('') }}</td>
+                <td class="num">{{ item.precio_unitario | format_currency }}</td> {# Usa filtro #}
+                <td class="num">{{ item.descuento | format_currency }}</td> {# Usa filtro #}
+                <td class="num">{{ item.precio_total_sin_impuesto | format_currency }}</td> {# Usa filtro #}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center;">No hay detalles para mostrar.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Usar div con clase 'summary-container' para el layout -->
+    <div class="summary-container">
+        <div class="info-adicional-container">
+            {% if info_adicional %}
+                <h3>Información Adicional</h3>
+                <ul>
+                {% for nombre, valor in info_adicional.items() %}
+                    <li><span class="label">{{ nombre.replace('_', ' ').capitalize() }}:</span> {{ valor }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="totales-container">
+            <table>
+                <tr>
+                    <td class="label">Subtotal Sin Impuestos:</td>
+                    <td class="value">{{ totales.total_sin_impuestos | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                <tr>
+                    <td class="label">Total Descuento:</td>
+                    <td class="value">{{ totales.total_descuento | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                {# Lógica mejorada para mostrar subtotales IVA 0% y otros IVAs #}
+                {% set iva_0_base = 0.0 %}
+                {% set iva_base = 0.0 %}
+                {% set iva_valor = 0.0 %}
+                {% set iva_tarifa = '?' %}
+                {% set ice_valor = 0.0 %}
+                {% set irbpnr_valor = 0.0 %}
+
+                {% if totales.impuestos_resumen is defined and totales.impuestos_resumen %}
+                    {% for impuesto in totales.impuestos_resumen %}
+                        {% if impuesto.codigo == '2' %} {# IVA #}
+                            {% if impuesto.codigo_porcentaje == '0' %} {# IVA 0% #}
+                                {% set iva_0_base = iva_0_base + (impuesto.base_imponible | float(default=0.0)) %}
+                            {% else %} {# Otro IVA (12, 15, etc) #}
+                                {% set iva_base = iva_base + (impuesto.base_imponible | float(default=0.0)) %}
+                                {% set iva_valor = iva_valor + (impuesto.valor | float(default=0.0)) %}
+                                {% set iva_tarifa = impuesto.tarifa | default(iva_tarifa) %}
+                            {% endif %}
+                        {% elif impuesto.codigo == '3' %} {# ICE #}
+                            {% set ice_valor = ice_valor + (impuesto.valor | float(default=0.0)) %}
+                        {% elif impuesto.codigo == '5' %} {# IRBPNR #}
+                            {% set irbpnr_valor = irbpnr_valor + (impuesto.valor | float(default=0.0)) %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {# Mostrar líneas de totales calculados #}
+                {% if iva_0_base > 0 %}
+                <tr>
+                    <td class="label">Subtotal IVA 0%:</td>
+                    <td class="value">{{ iva_0_base | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                {% endif %}
+                {% if iva_base > 0 or iva_valor > 0 %}
+                <tr>
+                    <td class="label">Subtotal IVA {{ iva_tarifa }}%:</td>
+                    <td class="value">{{ iva_base | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                 <tr>
+                    <td class="label">Valor IVA {{ iva_tarifa }}%:</td>
+                    <td class="value">{{ iva_valor | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                {% endif %}
+                {% if ice_valor > 0 %}
+                 <tr>
+                    <td class="label">Valor ICE:</td>
+                    <td class="value">{{ ice_valor | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                {% endif %}
+                 {% if irbpnr_valor > 0 %}
+                 <tr>
+                    <td class="label">Valor IRBPNR:</td>
+                    <td class="value">{{ irbpnr_valor | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                {% endif %}
+
+                 <tr>
+                    <td class="label">Propina:</td>
+                    <td class="value">{{ totales.propina | format_currency }}</td> {# Usa filtro #}
+                </tr>
+                <tr class="total">
+                    <td class="label">IMPORTE TOTAL:</td>
+                    <td class="value">{{ totales.importe_total | format_currency }}</td> {# Usa filtro #}
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="pagos-container">
+         <h3>Forma(s) de Pago</h3>
+         {% if factura_info.pagos %}
+            <ul>
+            {% set formas_pago_map = { "01": "SIN UTILIZACION SISTEMA FINANCIERO", "15": "COMPENSACIÓN DE DEUDAS", "16": "TARJETA DE DÉBITO", "17": "DINERO ELECTRÓNICO", "18": "TARJETA PREPAGO", "19": "TARJETA DE CRÉDITO", "20": "OTROS CON UTILIZACION SISTEMA FINANCIERO", "21": "ENDOSO DE TÍTULOS" } %}
+            {% for pago in factura_info.pagos %}
+                <li>
+                    <span class="label">{{ formas_pago_map.get(pago.forma_pago, 'Código: ' + pago.forma_pago) }}:</span>
+                    {{ pago.total | format_currency }} {# Usa filtro #}
+                    {% if pago.plazo and pago.unidad_tiempo %}
+                        (Plazo: {{ pago.plazo }} {{ pago.unidad_tiempo }})
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+         {% else %}
+            <p>No especificada</p>
+         {% endif %}
+    </div>
+
+</body>
+</html>

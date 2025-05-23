@@ -1,0 +1,2 @@
+version=1.1.1
+download_url=https://contabilidadsri.com/asistentecontable/asico_setup_1.1.1.exe
